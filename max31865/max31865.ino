@@ -24,14 +24,13 @@ Adafruit_MAX31865 thermo5 = Adafruit_MAX31865(46, 47, 48, 49);
 Adafruit_MAX31865 thermo6 = Adafruit_MAX31865(50, 51, 52, 53);
 
 // use hardware SPI, just pass in the CS pin
-//Adafruit_MAX31865 thermo = Adafruit_MAX31865(10);
+// Adafruit_MAX31865 thermo = Adafruit_MAX31865(10);
 
 // The value of the Rref resistor. Use 430.0 for PT100 and 4300.0 for PT1000
 #define RREF      4300.0
 // The 'nominal' 0-degrees-C resistance of the sensor
 // 100.0 for PT100, 1000.0 for PT1000
 #define RNOMINAL  1000.0
-
 
 void setup() {
   Serial.begin(115200);
@@ -45,7 +44,6 @@ void setup() {
   thermo6.begin(MAX31865_2WIRE);  // set to 2WIRE or 4WIRE as necessary
 }
 
-
 void loop() {
 
   char data = Serial.read();
@@ -53,43 +51,41 @@ void loop() {
   str[0] = data;
   str[1] = '\0';
 
-  if( str[0] == '1' )
-  {  
+  if (str[0] == '1') {  
     uint16_t rtd1 = thermo1.readRTD();
     uint16_t rtd2 = thermo2.readRTD();
     uint16_t rtd3 = thermo3.readRTD();
     uint16_t rtd4 = thermo4.readRTD();
     uint16_t rtd5 = thermo5.readRTD();
     uint16_t rtd6 = thermo6.readRTD();
-    
+      
     Serial.print(thermo1.temperature(RNOMINAL, RREF));  
     Serial.print(" ");
     Serial.print(thermo2.temperature(RNOMINAL, RREF));
     Serial.print(" ");
-    Serial.print(thermo3.temperature(RNOMINAL, RREF, 1));
+    Serial.print(thermo3.temperature(RNOMINAL, RREF));
     Serial.print(" ");
-    Serial.print(thermo4.temperature(RNOMINAL, RREF, 1));
+    Serial.print(thermo4.temperature(RNOMINAL, RREF));
     Serial.print(" ");
-    Serial.print(thermo5.temperature(RNOMINAL, RREF, 1));
+    Serial.print(thermo5.temperature(RNOMINAL, RREF));
     Serial.print(" ");
-    Serial.print(thermo6.temperature(RNOMINAL, RREF, 1));
+    Serial.print(thermo6.temperature(RNOMINAL, RREF));
     Serial.print("\n");
         
     // Check and print any faults
-    //uint8_t fault = thermo1.readFault();
     uint8_t fault = thermo1.readFault() || thermo2.readFault() || thermo3.readFault() ||
                     thermo4.readFault() || thermo5.readFault() || thermo6.readFault();
-    if (fault) {
+    if (fault > 3) {
       Serial.print("Fault 0x"); Serial.println(fault, HEX);
       if (fault & MAX31865_FAULT_HIGHTHRESH) {
        Serial.println("RTD High Threshold"); 
       }
       if (fault & MAX31865_FAULT_LOWTHRESH) {
         Serial.println("RTD Low Threshold"); 
-     }
+      }
       if (fault & MAX31865_FAULT_REFINLOW) {
         Serial.println("REFIN- > 0.85 x Bias"); 
-     }
+      }
       if (fault & MAX31865_FAULT_REFINHIGH) {
         Serial.println("REFIN- < 0.85 x Bias - FORCE- open"); 
       }
@@ -104,7 +100,7 @@ void loop() {
       thermo3.clearFault();
       thermo4.clearFault();
       thermo5.clearFault();
-      thermo6.clearFault();
+      thermo6.clearFault();  
     }
   }
 }
