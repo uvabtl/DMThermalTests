@@ -57,10 +57,10 @@ def graph():
     plt.ylabel("\u0394T [\u00B0C]")                                       # "\u0394" is the Greek letter delta in Unicode          
     plt.grid()
     plt.ylim([-30.0, 3.0])                                                # Limits are different since these are temperature changes
-    plt.text(0.05, -24, "Max \u0394T: {0}\u00B0C".format(round(-max([abs(ele) for ele in mytemp33]), 2)), fontsize = 9, color = "blue")      # Label for maximum temperature difference from RTD 1
-    plt.text(0.05, -25.5, "Max \u0394T: {0}\u00B0C".format(round(-max([abs(ele) for ele in mytemp44]), 2)), fontsize = 9, color = "green")   # Label for maximum temperature difference from RTD 2
-    plt.text(0.05, -27, "Max \u0394T: {0}\u00B0C".format(round(-max([abs(ele) for ele in mytemp55]), 2)), fontsize = 9, color = "red")       # Label for maximum temperature difference from RTD 3
-    plt.text(0.05, -28.5, "Max \u0394T: {0}\u00B0C".format(round(-max([abs(ele) for ele in mytemp66]), 2)), fontsize = 9, color = "gold")    # Label for maximum temperature difference from RTD 4
+    plt.text(0.05, -24, "Max \u0394T: {0}\u00B0C".format(round(min([ele for ele in mytemp33]), 2)), fontsize = 9, color = "blue")      # Label for maximum temperature difference from RTD 1
+    plt.text(0.05, -25.5, "Max \u0394T: {0}\u00B0C".format(round(min([ele for ele in mytemp44]), 2)), fontsize = 9, color = "green")   # Label for maximum temperature difference from RTD 2
+    plt.text(0.05, -27, "Max \u0394T: {0}\u00B0C".format(round(min([ele for ele in mytemp55]), 2)), fontsize = 9, color = "red")       # Label for maximum temperature difference from RTD 3
+    plt.text(0.05, -28.5, "Max \u0394T: {0}\u00B0C".format(round(min([ele for ele in mytemp66]), 2)), fontsize = 9, color = "gold")    # Label for maximum temperature difference from RTD 4
     plt.legend(loc = "upper right", prop = {"size": 8}, shadow = True, edgecolor = "black")
 
     # Prevent the axis labels and subplot titles from overlapping
