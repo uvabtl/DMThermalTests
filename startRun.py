@@ -33,17 +33,17 @@ while True:
         
         timestamp_curr = datetime.now()
         time_elapsed = float((timestamp_curr - timestamp_init).total_seconds())
-        if ((time_elapsed > 30.0) and (time_elapsed < 60.0) and (mykey_state == 0)):
+        if ((time_elapsed > 30.0) and (time_elapsed < 240.0) and (mykey_state == 0)):
             mykey.set_V(20)
             mykey.set_state(1)
             mykey_state = 1
         
-        if (time_elapsed > 60.0):
+        if (time_elapsed > 240.0):
             mykey.set_V(0)
             mykey.set_state(0)
             mykey_state = 0
         
-        if (time_elapsed > 120.0):
+        if (time_elapsed > 300.0):
             break
     
     except KeyboardInterrupt:

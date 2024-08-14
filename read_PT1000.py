@@ -26,10 +26,10 @@ else:
 command = "1"
 
 while True:
-    time.sleep(0.5)
-    data = ser.readline()[:-2]                        # The last bit gets rid of the new-line characters
-    if data:
-    	print(data)
+    #time.sleep(0.5)
+    #data = ser.readline()[:-2]                        # The last bit gets rid of the new-line characters
+    #if data:
+    #	print(data)
     x = ser.write(("1\r\n").encode())
     out = ""                                          # Empty string
     time.sleep(1)                                     # Let's wait one second before reading output (let's give device time to answer)              

@@ -43,7 +43,7 @@ def graph():
     plt.xlabel("Time Elapsed [min.]")                                                          # Time in minutes
     plt.ylabel("Temperature [\u00B0C]")                                                        # "\u00B0" is the degree symbol in Unicode
     plt.grid()                                                                                 # Creates a grid
-    plt.ylim([10.0, 50.0])                                                                     # Range of temperatures
+    plt.ylim([0.0, 50.0])                                                                     # Range of temperatures
     plt.legend(loc = "upper right", prop = {"size": 8}, shadow = True, edgecolor = "black")    # Legend
     
     # Creates the second of two subplots to be placed on bottom
