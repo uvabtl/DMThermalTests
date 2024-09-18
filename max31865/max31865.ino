@@ -78,7 +78,7 @@ void loop() {
     if (fault > 3) {
       Serial.print("Fault 0x"); Serial.println(fault, HEX);
       if (fault & MAX31865_FAULT_HIGHTHRESH) {
-       Serial.println("RTD High Threshold"); 
+        Serial.println("RTD High Threshold"); 
       }
       if (fault & MAX31865_FAULT_LOWTHRESH) {
         Serial.println("RTD Low Threshold"); 

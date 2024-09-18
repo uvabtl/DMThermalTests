@@ -3,6 +3,36 @@
 import serial
 import time
 import logging
+import sys
+
+# Keithley2231A module would send information to serial port about its function, which wrote it to the data file. This prevents that from happening
+def addLoggingLevel(levelName, levelNum, methodName=None):
+    if not methodName:
+        methodName = levelName.lower()
+
+    if hasattr(logging, levelName):
+        raise AttributeError("{} already defined in logging module".format(levelName))
+    if hasattr(logging, methodName):
+        raise AttributeError("{} already defined in logging module".format(methodName))
+    if hasattr(logging.getLoggerClass(), methodName):
+        raise AttributeError("{} already defined in logger class".format(methodName))
+
+    def logForLevel(self, message, *args, **kwargs):
+        if self.isEnabledFor(levelNum):
+            self._log(levelNum, message, args, **kwargs)
+
+    def logToRoot(message, *args, **kwargs):
+        logging.log(levelNum, message, *args, **kwargs)
+
+    logging.addLevelName(levelNum, levelName)
+    setattr(logging, levelName, levelNum)
+    setattr(logging.getLoggerClass(), methodName, logForLevel)
+    setattr(logging, methodName, logToRoot)
+
+addLoggingLevel("DATA", logging.WARNING - 5)
+
+sys.path.append("/home/uvabtl/Lab5015Utils/")
+from Lab5015_utils import Keithley2231A
 
 from optparse import OptionParser       # Allows the user to specify specific command-line argument options
 parser = OptionParser()
@@ -10,7 +40,10 @@ parser.add_option("-d", "--dev")        # "--dev" lets the user denote a serial 
 parser.add_option("-l", "--log")        # "--log" lets the user denote a data file to be given as a command-line argument
 (options, args) = parser.parse_args()   
 
-logging.basicConfig(format = "%(asctime)s %(message)s", datefmt = "%Y-%m-%d %H:%M:%S", filename = options.log, level = logging.DEBUG)
+mykey = Keithley2231A()
+mykey_state = 0
+
+logging.basicConfig(format = "%(asctime)s %(message)s", datefmt = "%Y-%m-%d %H:%M:%S", filename = options.log, level = logging.DATA)
 
 port = options.dev
 
@@ -26,19 +59,16 @@ else:
 command = "1"
 
 while True:
-    #time.sleep(0.5)
-    #data = ser.readline()[:-2]                        # The last bit gets rid of the new-line characters
-    #if data:
-    #	print(data)
     x = ser.write(("1\r\n").encode())
     out = ""                                          # Empty string
     time.sleep(1)                                     # Let's wait one second before reading output (let's give device time to answer)              
     line = ser.readline()                             # Read a byte string
     if line:
         string = line.decode()                        # Convert the byte string to a unicode string
-        string = string[:-1]                          # Remove the newline character 
+        string = string[:-1]                          # Remove the newline character
         out += string
+        out += " " + str(mykey.meas_V()) + " " + str(mykey.meas_I()) + " " + str(mykey.meas_P())
     if out != "":
-        logging.info(out.rstrip().lstrip(" "))
+        logging.data(out.rstrip().lstrip(" "))
     
 ser.close()

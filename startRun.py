@@ -26,6 +26,10 @@ timestamp_init = datetime.now()
 
 time.sleep(3)
 
+time1 = 30
+time2 = time1 + 240
+time3 = time2 + 30
+
 while True:
     try:
         os.system("tail -n 1 run%04d.log"%int(options.run)) 
@@ -33,17 +37,17 @@ while True:
         
         timestamp_curr = datetime.now()
         time_elapsed = float((timestamp_curr - timestamp_init).total_seconds())
-        if ((time_elapsed > 30.0) and (time_elapsed < 240.0) and (mykey_state == 0)):
+        if ((time_elapsed > time1) and (time_elapsed < time2) and (mykey_state == 0)):
             mykey.set_V(20)
             mykey.set_state(1)
             mykey_state = 1
         
-        if (time_elapsed > 240.0):
+        if (time_elapsed > time2):
             mykey.set_V(0)
             mykey.set_state(0)
             mykey_state = 0
         
-        if (time_elapsed > 300.0):
+        if (time_elapsed > time3):
             break
     
     except KeyboardInterrupt:

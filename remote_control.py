@@ -50,7 +50,7 @@ def setVoltage(volt, vi):
 # Not sure what this one does, either.
 def queryVoltage(vi):
     cmd = "meas:volt?"
-    print("Voltage currently at {0} V".format(query(cmd, vi)), end = "")
+    print("Voltage in V currently at {0}".format(query(cmd, vi)), end = "")
     return query(cmd, vi)
 
 # This tells you which channel is on.
@@ -102,7 +102,7 @@ def setCurrent(current, vi):
  
 def queryCurrent(vi):
     cmd = "meas:curr?"
-    print("Current currently at {0} A".format(query(cmd, vi)), end = "")
+    print("Current in A currently at {0}".format(query(cmd, vi)), end = "")
     return query(cmd, vi)
 
 def stepCurr(vi, c1, t = 5, dt = 0.25):
@@ -118,7 +118,7 @@ def stepCurr(vi, c1, t = 5, dt = 0.25):
 
 def queryPower(vi):
     cmd = "meas:pow?"
-    print("Power currently at {0} W".format(query(cmd, vi)), end = "")
+    print("Power in W currently at {0}".format(query(cmd, vi)), end = "")
     return query(cmd, vi)
     
 '''==========================================================================================================================================='''

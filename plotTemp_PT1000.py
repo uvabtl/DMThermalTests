@@ -21,6 +21,9 @@ mytemp33 = []   # Denotes temperature change between RTD 1 and outside ambient t
 mytemp44 = []   # Denotes temperature change between RTD 2 and outside ambient temperature
 mytemp55 = []   # Denotes temperature change between RTD 3 and outside ambient temperature
 mytemp66 = []   # Denotes temperature change between RTD 4 and outside ambient temperature
+myvolt = []     # Denotes voltage read by the Keithley2231A power supply
+mycurr = []     # Denotes current read by the Keithley2231A power supply
+mypow = []      # Denotes power read by the Keithley2231A power supply
 
 # The file from which we're reading data
 file = sys.argv[1]
@@ -31,8 +34,8 @@ def graph():
     # Clears the current figure
     plt.clf()
     
-    # Creates the first of two subplots to be placed on top
-    plt.subplot(211)
+    # Creates the first of three subplots to be placed on top left
+    plt.subplot(221)
     
     plt.plot(mysecs, mytemp1, color = "black", linestyle = "dashed", label = "Copper Left")    # Temperature outside DM on top as a function of time  
     plt.plot(mysecs, mytemp2, color = "black", linestyle = "dotted", label = "Copper Right")   # Temperature outside DM on bottom as a function of time
@@ -43,11 +46,11 @@ def graph():
     plt.xlabel("Time Elapsed [min.]")                                                          # Time in minutes
     plt.ylabel("Temperature [\u00B0C]")                                                        # "\u00B0" is the degree symbol in Unicode
     plt.grid()                                                                                 # Creates a grid
-    plt.ylim([0.0, 50.0])                                                                     # Range of temperatures
+    plt.ylim([0.0, 50.0])                                                                      # Range of temperatures
     plt.legend(loc = "upper right", prop = {"size": 8}, shadow = True, edgecolor = "black")    # Legend
     
-    # Creates the second of two subplots to be placed on bottom
-    plt.subplot(212)
+    # Creates the second of three subplots to be placed on top right
+    plt.subplot(222)
 
     plt.plot(mysecs, mytemp33, label = "Bottom Left", color = "blue")     # Temperature difference between RTD 1 and outside temperature closest to RTD 1 as a function of power
     plt.plot(mysecs, mytemp44, label = "Bottom Right", color = "green")   # Temperature difference between RTD 2 and outside temperature closest to RTD 2 as a function of power
@@ -57,10 +60,25 @@ def graph():
     plt.ylabel("\u0394T [\u00B0C]")                                       # "\u0394" is the Greek letter delta in Unicode          
     plt.grid()
     plt.ylim([-30.0, 3.0])                                                # Limits are different since these are temperature changes
+    plt.text(0.05, -22.5, "Power: {0} W".format(round(max(mypow), 4)), fontsize = 9, color = "black")             # Label for maximum power achieved by power supply
     plt.text(0.05, -24, "Max \u0394T: {0}\u00B0C".format(round(min(mytemp33), 2)), fontsize = 9, color = "blue")      # Label for maximum temperature difference from RTD 1
     plt.text(0.05, -25.5, "Max \u0394T: {0}\u00B0C".format(round(min(mytemp44), 2)), fontsize = 9, color = "green")   # Label for maximum temperature difference from RTD 2
     plt.text(0.05, -27, "Max \u0394T: {0}\u00B0C".format(round(min(mytemp55), 2)), fontsize = 9, color = "red")       # Label for maximum temperature difference from RTD 3
     plt.text(0.05, -28.5, "Max \u0394T: {0}\u00B0C".format(round(min(mytemp66), 2)), fontsize = 9, color = "gold")    # Label for maximum temperature difference from RTD 4
+    plt.legend(loc = "upper right", prop = {"size": 8}, shadow = True, edgecolor = "black")
+
+    # Create the third of three subplots to be placed on bottom left
+    plt.subplot(224)
+
+    plt.plot(mytemp33, mypow, label = "Bottom Left", color = "blue")
+    plt.plot(mytemp44, mypow, label = "Bottom Right", color = "green")
+    plt.plot(mytemp55, mypow, label = "Top Left", color = "red")
+    plt.plot(mytemp66, mypow, label = "Top Right", color = "gold")
+    plt.xlabel("\u0394T [\u00B0C]")
+    plt.ylabel("Power [W]")
+    plt.grid()
+    plt.xlim([-20, 5])
+    plt.ylim([0, 5])
     plt.legend(loc = "upper right", prop = {"size": 8}, shadow = True, edgecolor = "black")
 
     # Prevent the axis labels and subplot titles from overlapping
@@ -74,7 +92,7 @@ with open(str(file), "r") as fin:
     for line in fin.readlines():
 
         readings = line.strip().split()   # Create a list of all the data in the file
-        if len(readings) != 8:            # Don't include any lines that contain faults, errors, etc.
+        if len(readings) != 11:           # Don't include any lines that contain faults, errors, etc.
             continue;                     # Could not tell you why there's a semicolon here
     
         mytime.append(datetime.strptime(readings[0] + " " + readings[1], "%Y-%m-%d %H:%M:%S"))   # Add timestamps
@@ -90,6 +108,9 @@ with open(str(file), "r") as fin:
         mytemp4.append(float(readings[5]))
         mytemp5.append(float(readings[6]))
         mytemp6.append(float(readings[7]))
+        myvolt.append(float(readings[8]))
+        mycurr.append(float(readings[9]))
+        mypow.append(float(readings[10]))
 
         # Subtract corresponding outside temperatures from each RTD reading and add to respective lists
         mytemp33.append(mytemp3[-1] - mytemp1[-1])
@@ -98,7 +119,7 @@ with open(str(file), "r") as fin:
         mytemp66.append(mytemp6[-1] - mytemp2[-1])
 
         # Print the time and the temperature readings to the screen
-        print(str(readings[1]) + " " + str(readings[2]) + " " + str(readings[3]) + " " + str(readings[4]) + " " + str(readings[5]) + " " + str(readings[6]) + " " + str(readings[7]))
+        print(str(readings[1]) + " " + str(readings[2]) + " " + str(readings[3]) + " " + str(readings[4]) + " " + str(readings[5]) + " " + str(readings[6]) + " " + str(readings[7]) + " " + str(readings[8]) + " " + str(readings[9]) + " " + str(readings[10]))
 
 # Add data as it comes (much the same as before)
 while True:
@@ -106,7 +127,7 @@ while True:
         with open(str(file), "r") as fin:
             for line in fin.readlines()[-1:]:
                 readings = line.strip().split()
-                if len(readings) != 8:
+                if len(readings) != 11:
                     continue;
                 mytime.append(datetime.strptime(readings[0] + " " + readings[1], "%Y-%m-%d %H:%M:%S"))
                 mysecs.append((mytime[-1] - mytime[0]).total_seconds() / 60.0)
@@ -116,11 +137,14 @@ while True:
                 mytemp4.append(float(readings[5]))
                 mytemp5.append(float(readings[6]))
                 mytemp6.append(float(readings[7]))
+                myvolt.append(float(readings[8]))
+                mycurr.append(float(readings[9]))
+                mypow.append(float(readings[10]))
                 mytemp33.append(mytemp3[-1] - mytemp1[-1])
                 mytemp44.append(mytemp4[-1] - mytemp2[-1])
                 mytemp55.append(mytemp5[-1] - mytemp1[-1])
                 mytemp66.append(mytemp6[-1] - mytemp2[-1])
-                print(str(readings[1]) + " " + str(readings[2]) + " " + str(readings[3]) + " " + str(readings[4]) + " " + str(readings[5]) + " " + str(readings[6]) + " " + str(readings[7]))
+                print(str(readings[1]) + " " + str(readings[2]) + " " + str(readings[3]) + " " + str(readings[4]) + " " + str(readings[5]) + " " + str(readings[6]) + " " + str(readings[7]) + " " + str(readings[8]) + " " + str(readings[9]) + " " + str(readings[10]))
                 graph()
                 plt.pause(3)
     except KeyboardInterrupt:
